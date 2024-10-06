@@ -1155,3 +1155,105 @@ public:
         return result;
     }
 };
+
+class leetcode404
+{
+public:
+    int sumOfLeftLeaves(TreeNode *root)
+    {
+        // 左叶子节点的和
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            return 0;
+        }
+        // 左叶子节点如何判断是无法通过自己得知得看父节点
+        // 父节点的左孩子不为空并且左孩子的左右孩子都为空节点
+        // 这样我们就得到了左叶子节点
+        int leftvale = sumOfLeftLeaves(root->left);
+        if (root->left != nullptr && root->left->left == nullptr && root->left->right == nullptr)
+        {
+            leftvale = root->left->val;
+        }
+
+        return leftvale + sumOfLeftLeaves(root->right);
+    }
+
+    int sumOfLeftLeaves2(TreeNode *root)
+    {
+        // 迭代法就是在左这块加一个判断如果是左叶子节点就操作一下
+        stack<TreeNode *> st;
+        int sum = 0;
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        st.push(root);
+        while (!st.empty())
+        {
+            TreeNode *node = st.top();
+            if (node != nullptr)
+            {
+                st.pop();
+                st.push(node);
+                st.push(nullptr);
+                if (node->right)
+                {
+                    st.push(node->right);
+                }
+                if (node->left)
+                {
+                    st.push(node->left);
+                }
+            }
+            else
+            {
+                st.pop();
+                node = st.top();
+                if (node->left != nullptr && node->left->left == nullptr && node->left->right)
+                {
+                    sum += node->left->val;
+                }
+            }
+        }
+        return sum;
+    }
+};
+
+class leetcode513
+{
+public:
+    int findBottomLeftValue(TreeNode *root)
+    {
+        // 找到树最底层 最左边 节点的值。
+        queue<TreeNode *> que;
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        que.push(root);
+        int size = 0;
+        int ans = 0;
+        while (!que.empty())
+        {
+            size = que.size();
+            for (int i = 0; i < size; ++i)
+            {
+                TreeNode *node = que.front();
+                que.pop();
+                if (node->right)
+                    que.push(node->right);
+                if (node->left)
+                    que.push(node->left);
+                if (i == 0)
+                {
+                    ans = node->val;
+                }
+            }
+        }
+        return ans;
+    }
+};
