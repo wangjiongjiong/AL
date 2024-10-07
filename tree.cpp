@@ -1256,4 +1256,75 @@ public:
         }
         return ans;
     }
+    int maxdepth = INT_MIN;
+    int result = 0;
+    void traversal(TreeNode *node, int depth)
+    {
+        // 递归的中止条件
+        // 碰到叶子节点就先判断当前深度是不是大于最大深度如果
+        // 大于最大深度就更新最大深度同时更新结果
+        if (!node->left && !node->right)
+        {
+            if (depth > maxdepth)
+            {
+                maxdepth = depth;
+                result = node->val;
+            }
+        }
+
+        if (node->left)
+        {
+            depth++;
+            traversal(node->left, depth);
+            depth--;
+        }
+        if (node->right)
+        {
+            depth++;
+            traversal(node->right, depth);
+            depth--;
+        }
+    }
+
+    int findBottomLeftValue2(TreeNode *root)
+    {
+        // 递归的思想，其实这个题目不需要考虑
+        // 前中后序使用哪一个因为我们的目的找到
+        // 最后一层的第一个节点
+        // 因此只要保证左在右前面操作即可
+        int depth = 1;
+        traversal(root, depth);
+    }
+};
+
+class leetcode112
+{
+public:
+    int sum = 0;
+    bool hasPathSum(TreeNode *root, int targetSum)
+    {
+        return getpath(root, sum, targetSum);
+    }
+
+    bool getpath(TreeNode *node, int sum, int tar)
+    {
+        if (!node->left && !node->right)
+        {
+            sum += node->val;
+            if (tar == sum)
+            {
+                return true;
+            }
+        }
+
+        if (node->left)
+        {
+            getpath(node->left, sum, tar);
+        }
+        if (node->right)
+        {
+            getpath(node->right, sum, tar);
+        }
+        return false;
+    }
 };
