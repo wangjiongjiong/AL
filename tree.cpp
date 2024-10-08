@@ -820,7 +820,7 @@ public:
         }
         return compare(root->left, root->right);
     }
-    bool isSymmetric(TreeNode *root)
+    bool isSymmetric2(TreeNode *root)
     {
         // 迭代的思想
         if (root == nullptr)
@@ -1294,6 +1294,8 @@ public:
         // 因此只要保证左在右前面操作即可
         int depth = 1;
         traversal(root, depth);
+
+        return result;
     }
 };
 
@@ -1301,20 +1303,30 @@ class leetcode112
 {
 public:
     int sum = 0;
+    bool flag = false;
     bool hasPathSum(TreeNode *root, int targetSum)
     {
-        return getpath(root, sum, targetSum);
+        if (root == nullptr)
+        {
+            return false;
+        }
+        getpath(root, sum, targetSum);
+        return flag;
     }
 
-    bool getpath(TreeNode *node, int sum, int tar)
+    void getpath(TreeNode *node, int sum, int tar)
     {
         if (!node->left && !node->right)
         {
             sum += node->val;
             if (tar == sum)
             {
-                return true;
+                flag = true;
             }
+        }
+        else
+        {
+            sum += node->val;
         }
 
         if (node->left)
@@ -1325,6 +1337,102 @@ public:
         {
             getpath(node->right, sum, tar);
         }
+    }
+};
+
+class leetcode112_2
+{
+public:
+    bool hasPathSum(TreeNode *root, int targetSum)
+    {
+        if (root == nullptr)
+        {
+            return false;
+        }
+        return traveles(root, targetSum);
+    }
+    bool traveles(TreeNode *node, int count)
+    {
+        // 这里用count，最开始赋值为tar的值，每次递归对count-node->val这样我们只需要判断
+        // 最后count是不是0就可以知道有没有目标的路径
+        if (node->left == nullptr && node->right == nullptr && count == 0)
+        {
+            return true;
+        }
+
+        // 碰到叶子节点但是没有符合的路径就直接返回
+        if (!node->left && !node->right)
+        {
+            return false;
+        }
+
+        // 递归主体
+        if (node->left)
+        {
+            if (traveles(node->left, count - node->left->val))
+            {
+                return true;
+            }
+        }
+        if (node->right)
+        {
+            if (traveles(node->right, count - node->right->val))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 };
+
+class leetcode112_3
+{
+public:
+    bool hasPathSum(TreeNode *root, int targetSum)
+    {
+        // 最后用迭代的方法处理
+        // 树的迭代这个题目很明显不能用层序遍历会很麻烦
+        // 就使用正常的遍历方式
+        if (root == nullptr)
+        {
+            return false;
+        }
+        // 这里用的栈存的是一个pair 存放treenode和一个int
+        // int就是当前根节点到当前节点路径的和
+        stack<pair<TreeNode *, int>> st;
+        st.push(pair<TreeNode *, int>(root, root->val));
+        while (!st.empty())
+        {
+            pair<TreeNode *, int> node = st.top();
+            st.pop();
+            if (node.first->right)
+            {
+                st.push(pair<TreeNode *, int>(node.first->right, node.second + node.first->right->val));
+            }
+            if (node.first->left)
+            {
+                st.push(pair<TreeNode *, int>(node.first->left, node.second + node.first->left->val));
+            }
+            if (!node.first->left && !node.first->right && node.second == targetSum)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+class leetcode113
+{
+public:
+    vector<vector<int>> pathSum(TreeNode *root, int targetSum)
+    {
+    }
+};
+
+int main()
+{
+    printf("www");
+    return 0;
+}
