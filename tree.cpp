@@ -1428,11 +1428,390 @@ class leetcode113
 public:
     vector<vector<int>> pathSum(TreeNode *root, int targetSum)
     {
+        // 这个题目根112路径之和类似，只是那个题目只需返回
+        // 是否有满足的路径即可
+        // 这个题目需要返回满足的路径
+        vector<vector<int>> result;
+        vector<int> path;
+        if (root == nullptr)
+        {
+            return result;
+        }
+        path.push_back(root->val);
+        traveles(root, targetSum - root->val, result, path);
+        return result;
+    }
+    void traveles(TreeNode *node, int count, vector<vector<int>> &res, vector<int> &path)
+    {
+        if (!node->left && !node->right && count == 0)
+        {
+            res.push_back(path);
+        }
+        if (!node->left && !node->right)
+        {
+            return;
+        }
+
+        if (node->left)
+        {
+            path.push_back(node->left->val);
+            traveles(node->left, count - node->left->val, res, path);
+            path.pop_back();
+        }
+
+        if (node->right)
+        {
+            path.push_back(node->right->val);
+            traveles(node->right, count - node->right->val, res, path);
+            path.pop_back();
+        }
+    }
+};
+
+class leetcode106
+{
+public:
+    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder)
+    {
+        // 从后序与中序构建二叉树
+        // 主要思想就是分割中序与后序
+        // 很明显后序最后的一个节点就是中节点
+        // 找到了中节点然后就可以根据中序进行分割
+        // 总体思想如下
+        // 1.如果后序数组为0的话，就返回空节点
+        // 2.后序数组的最后一个就是中间节点
+        // 3.在中序数组找到中间节点
+        // 4.分割中序数组
+        // 5.分割后序数组
+        // 6.递归左中序，左后序
+        // 7.递归右中序，右后序
+
+        if (inorder.size() == 0 || postorder.size() == 0)
+        {
+            return nullptr;
+        }
+        return build(inorder, postorder);
+    }
+
+    TreeNode *build(vector<int> &inorder, vector<int> &postorder)
+    {
+        if (postorder.size() == 0)
+        {
+            return nullptr;
+        }
+        int nodeval = postorder[postorder.size() - 1];
+        TreeNode *node = new TreeNode(nodeval);
+
+        // 叶子节点
+        if (postorder.size() == 1)
+            return node;
+        int index = 0;
+        for (index = 0; index < inorder.size(); ++index)
+        {
+            if (inorder[index] == nodeval)
+            {
+                break;
+            }
+        }
+        // 后序最后一个得删除
+        postorder.pop_back();
+        //  分割中序
+        //  左子树为[0,index) ,右子树为(index,inorder.size]
+        vector<int> leftinorder(inorder.begin(), inorder.begin() + index);
+        vector<int> rightinorder(inorder.begin() + index + 1, inorder.end());
+
+        // 分割后序
+        // 分割后序可以利用中序，因为后序和中序长度应该一致否则就是错误的
+        vector<int> leftpostorder(postorder.begin(), postorder.begin() + leftinorder.size());
+        vector<int> rightpostorder(postorder.begin() + leftinorder.size(), postorder.end());
+
+        // 左子树递归构建
+        node->left = build(leftinorder, leftpostorder);
+        // 右子树递归构建
+        node->right = build(rightinorder, rightpostorder);
+
+        return node;
+    }
+};
+
+class leetcode105
+{
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+    {
+        // 和后序、中序构建二叉树类似
+        // 1.前序数组如果为空就证明访问到叶子节点返回空
+        // 2.前序数组的第一个数就是中间节点
+        // 3.利用中序数组找到中间节点的位置
+        // 4.分割中序数组
+        // 5.分割前序数组
+        // 6.递归处理左子树
+        // 7.递归处理右子树
+        // 分割一定是先分割中序，因为只有分割出来中序我们才能知道左右到底是什么
+        if (preorder.size() == 0 || inorder.size() == 0)
+        {
+            return nullptr;
+        }
+        return build(preorder, inorder);
+    }
+
+    TreeNode *build(vector<int> &preorder, vector<int> &inorder)
+    {
+        if (preorder.size() == 0)
+        {
+            return nullptr;
+        }
+        int nodeval = preorder[0];
+        TreeNode *node = new TreeNode(nodeval);
+        if (preorder.size() == 1)
+        {
+            return node;
+        }
+        int index = 0;
+        for (index = 0; index < inorder.size(); ++index)
+        {
+            if (inorder[index] == nodeval)
+            {
+                break;
+            }
+        }
+        // 中序分割
+        vector<int> leftinorder(inorder.begin(), inorder.begin() + index);
+        vector<int> rightinorder(inorder.begin() + index + 1, inorder.end());
+        // 首先要删除前序最前面的元素
+        preorder.erase(preorder.begin(), preorder.begin() + 1);
+        //  前序分割
+        vector<int> leftpreorder(preorder.begin(), preorder.begin() + leftinorder.size());
+        vector<int> rightpreorder(preorder.begin() + leftinorder.size(), preorder.end());
+
+        // 左子树构建
+        node->left = build(leftinorder, leftpreorder);
+        // 右子树构建
+        node->right = build(rightpreorder, rightinorder);
+        return node;
+    }
+};
+
+class leetcode654
+{
+public:
+    TreeNode *constructMaximumBinaryTree(vector<int> &nums)
+    {
+        if (nums.size() == 0)
+        {
+            return nullptr;
+        }
+        return build(nums);
+    }
+
+    TreeNode *build(vector<int> &vec)
+    {
+        if (vec.size() == 0)
+        {
+            return nullptr;
+        }
+        int max = INT_MIN;
+        int index = 0;
+        for (int i = 0; i < vec.size(); ++i)
+        {
+            if (max < vec[i])
+            {
+                max = vec[i];
+                index = i;
+            }
+        }
+        TreeNode *node = new TreeNode(max);
+        if (vec.size() == 1)
+        {
+            return node;
+        }
+        // 分割左数组
+        vector<int> left_vec(vec.begin(), vec.begin() + index);
+        // 分割右数组
+        vector<int> right_vec(vec.begin() + index + 1, vec.end());
+        // 递归构建左子树
+        node->left = build(left_vec);
+        // 递归构建右子树
+        node->right = build(right_vec);
+        return node;
+    }
+};
+
+class leetcode617
+{
+public:
+    TreeNode *mergeTrees(TreeNode *root1, TreeNode *root2)
+    {
+        // 这个题目我看到的第一瞬间就是同时遍历两个树
+        if (root1 == nullptr && root2 == nullptr)
+        {
+            return nullptr;
+        }
+        else if (root1 == nullptr && root2 != nullptr)
+        {
+            return root2;
+        }
+        else if (root1 != nullptr && root2 == nullptr)
+        {
+            return root1;
+        }
+
+        return build(root1, root2);
+    }
+
+    TreeNode *build(TreeNode *node1, TreeNode *node2)
+    {
+        TreeNode *node = new TreeNode();
+        if (node1 != nullptr && node2 == nullptr)
+        {
+            return node1;
+        }
+        else if (node1 == nullptr && node2 != nullptr)
+        {
+            return node2;
+        }
+        node->val = node1->val + node2->val;
+        node->left = build(node1->left, node2->left);
+        node->right = build(node1->right, node2->right);
+        return node;
+    }
+};
+
+class leetcode700
+{
+public:
+    TreeNode *searchBST(TreeNode *root, int val)
+    {
+        // 直接用最简单遍历
+        TreeNode *node = new TreeNode();
+        if (root == nullptr)
+        {
+            return root;
+        }
+        if (root->val == val)
+        {
+            return root;
+        }
+        else if (root->val > val)
+        {
+            node = searchBST(root->left, val);
+        }
+        else
+        {
+            node = searchBST(root->right, val);
+        }
+        return node;
+    }
+
+    TreeNode *searchBST2(TreeNode *root, int val)
+    {
+        // 直接用最简单遍历
+        // 也可以用迭代法
+        if (root == nullptr)
+        {
+            return root;
+        }
+        while (root != nullptr)
+        {
+            if (root->val == val)
+            {
+                return root;
+            }
+            else if (root->val > val)
+            {
+                root = root->left;
+            }
+            else
+            {
+                root = root->right;
+            }
+        }
+        return nullptr;
+    }
+};
+
+class leetcode98
+{
+public:
+    TreeNode *pre = nullptr;
+    bool isValidBST(TreeNode *root)
+    {
+        // 判断这个二叉搜索树是不是正确得
+        // 中序遍历可以解决
+        // 中序遍历是左中右，因此中序遍历得结果就是一个递增得序列
+        // 其实就是在中序中判断每次判断一下当前节点是否大于前一个节点
+        // 这样就可以解决二叉搜索树是否正确
+        if (root == nullptr)
+        {
+            return true;
+        }
+
+        // 左
+        bool left = isValidBST(root->left);
+        // 中
+        if (pre != nullptr && pre->val > root->val)
+        {
+            return false;
+        }
+        else
+        {
+            pre = root;
+        }
+        // 右
+        bool right = isValidBST(root->right);
+
+        return right && left;
+    }
+
+    bool isValidBST2(TreeNode *root)
+    {
+        if (root == nullptr)
+        {
+            return true;
+        }
+        stack<TreeNode *> st;
+        st.push(root);
+        while (!st.empty())
+        {
+            TreeNode *node = st.top();
+            if (node != nullptr)
+            {
+                st.pop();
+                // 左
+                if (node->left)
+                {
+                    st.push(node->left);
+                }
+                st.push(node);
+                st.push(nullptr);
+
+                //  右
+                if (node->right)
+                {
+                    st.push(node->right);
+                }
+            }
+            else
+            {
+                st.pop();
+                node = st.top();
+                st.pop();
+                // 中
+                if (pre != nullptr && pre->val >= node->val)
+                {
+                    return false;
+                }
+                else
+                {
+                    pre = node;
+                }
+            }
+        }
+        return true;
     }
 };
 
 int main()
 {
-    printf("www");
     return 0;
 }
