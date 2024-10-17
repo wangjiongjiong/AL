@@ -1811,7 +1811,387 @@ public:
     }
 };
 
-int main()
+class leetcode530
 {
-    return 0;
-}
+public:
+    int result = INT_MAX;
+    TreeNode *pre = nullptr;
+    int getMinimumDifference(TreeNode *root)
+    {
+        // 二叉搜索树感觉应用最多就是中序遍历
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        searchmin(root);
+        return result;
+    }
+
+    void searchmin(TreeNode *node)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+        // 左
+        searchmin(node->left);
+        // 中
+        if (pre != nullptr)
+        {
+            result = min(result, abs(node->val - pre->val));
+        }
+        pre = node;
+        // 右
+        searchmin(node->right);
+    }
+
+    int getMinimumDifference2(TreeNode *root)
+    {
+        // 二叉搜索树感觉应用最多就是中序遍历
+        // 迭代法也是可以的
+        int result = INT_MAX;
+        if (root == nullptr)
+        {
+            return 0;
+        }
+        stack<TreeNode *> st;
+        st.push(root);
+        while (!st.empty())
+        {
+            TreeNode *node = st.top();
+            if (node != nullptr)
+            {
+                st.pop();
+                if (node->right)
+                {
+                    st.push(node->right);
+                }
+                st.push(node);
+                st.push(nullptr);
+                if (node->left)
+                {
+                    st.push(node->left);
+                }
+            }
+            else
+            {
+                st.pop();
+                node = st.top();
+                if (pre != nullptr)
+                {
+                    result = min(result, abs(node->val - pre->val));
+                }
+                pre = node;
+                st.pop();
+            }
+        }
+        return result;
+    }
+};
+
+class leetcode501
+{
+public:
+    TreeNode *pre = nullptr;
+    int maxcount = 0, count = 0;
+    vector<int> result;
+    vector<int> findMode(TreeNode *root)
+    {
+        // 众数
+        // 常规思路就是先遍历一遍二叉树记录最大的出现次数
+        // 然后再遍历一遍二叉树将出现次数等于最大出现次数的数放入数组
+        // 这样的思路可以解决这个问题
+        // 但是可以利用一个前置指针来解决这个问题
+        // 这个在二叉搜索树里面比较常见
+        // 因此遇到二叉搜索树需要思考到这个方法
+
+        traversal(root);
+        return result;
+    }
+
+    void traversal(TreeNode *node)
+    {
+        // 递归中止条件
+        if (node == nullptr)
+        {
+            return;
+        }
+        // left
+        traversal(node->left);
+        // mid
+        if (pre == nullptr)
+        {
+            count = 1;
+        }
+        else if (pre->val == node->val)
+        {
+            count++;
+        }
+        else
+        {
+            if (count > maxcount)
+            {
+                maxcount = count;
+                result.clear();
+                result.push_back(node->val);
+            }
+            count = 1;
+        }
+        pre = node;
+        if (count == maxcount)
+        {
+            result.push_back(node->val);
+        }
+
+        // right
+        traversal(node->left);
+    }
+
+    vector<int> findMode2(TreeNode *root)
+    {
+        // 众数
+        // 常规思路就是先遍历一遍二叉树记录最大的出现次数
+        // 然后再遍历一遍二叉树将出现次数等于最大出现次数的数放入数组
+        // 这样的思路可以解决这个问题
+        // 但是可以利用一个前置指针来解决这个问题
+        // 这个在二叉搜索树里面比较常见
+        // 因此遇到二叉搜索树需要思考到这个方法
+        // 迭代法也可以的
+        stack<TreeNode *> st;
+        if (root == nullptr)
+        {
+            return result;
+        }
+        st.push(root);
+        while (!st.empty())
+        {
+            TreeNode *node = st.top();
+            if (node != nullptr)
+            {
+                st.pop();
+                if (node->right)
+                {
+                    st.push(node->right);
+                }
+                st.push(node);
+                st.push(nullptr);
+                if (node->left)
+                {
+                    st.push(node->left);
+                }
+            }
+            else
+            {
+                st.pop();
+                node = st.top();
+                st.pop();
+                if (pre == nullptr)
+                {
+                    count = 1;
+                }
+                else if (pre->val == node->val)
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 1;
+                }
+                pre = node;
+            }
+            if (count == maxcount)
+            {
+                result.push_back(node->val);
+            }
+            else if (count > maxcount)
+            {
+                maxcount = count;
+                result.clear();
+                result.push_back(node->val);
+            }
+        }
+
+        return result;
+    }
+};
+
+class leetcode236
+{
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
+    {
+        // 最近父节点
+        // 其实利用得是一个回溯得思想
+        // 有递归就有回溯
+        // 回溯其实就是把下层得返回给上层处理
+        // 这个题目就是利用这个思路，因为我们要找最近父节点，正常来讲是要
+        // 从下往上遍历得，但是我们所经历得遍历都是从上往下遍历
+        // 因此这种回溯得思路是非常好用得
+        /* 递归中止条件，遇到空节点就返回空，遇到p或者q就把q或p返回 */
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        else if (root == p || root == q)
+        {
+            return root;
+        }
+        // 左
+        TreeNode *left = lowestCommonAncestor(root->left, p, q);
+        // 右
+        TreeNode *right = lowestCommonAncestor(root->right, p, q);
+        /* 中，中处理主要考虑，如果左和右同时不返回空那么此时root节点就是最近公共父节点返回即可
+            如果此时左不为空那就返回左，右不为空就返回右，都为空就返回空 */
+        if (left && right)
+        {
+            return root;
+        }
+        else if (left && !right)
+        {
+            return left;
+        }
+        else if (!left && right)
+        {
+            return right;
+        }
+        else
+        {
+            return root;
+        }
+    }
+};
+
+class leetcode235
+{
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
+    {
+        // 利用二叉搜索树的特点
+        // 如果p和q在根节点两侧那么不就直接返回根节点就行了吧
+
+        return traversal(root, p, q);
+    }
+
+    TreeNode *traversal(TreeNode *node, TreeNode *p, TreeNode *q)
+    {
+        if (node == nullptr)
+        {
+            return node;
+        }
+
+        // 左
+        if (node->val > p->val && node->val > q->val)
+        {
+            TreeNode *left = traversal(node->left, p, q);
+            if (left)
+            {
+                return left;
+            }
+        }
+
+        // 右
+        if (node->val < p->val && node->val < q->val)
+        {
+            TreeNode *right = traversal(node->right, p, q);
+            if (right)
+            {
+                return right;
+            }
+        }
+
+        // 证明此时节点就是中间节点直接返回即可
+        return node;
+    }
+
+    TreeNode *traversal2(TreeNode *node, TreeNode *p, TreeNode *q)
+    {
+        // 迭代法感觉更简单
+        if (node == nullptr)
+        {
+            return nullptr;
+        }
+
+        while (node)
+        {
+            // 左
+            if (node->val > p->val && node->val > q->val)
+            {
+                node = node->left;
+            }
+            // 右
+            else if (node->val < p->val && node->val < q->val)
+            {
+                node = node->right;
+            }
+            else
+            {
+                return node;
+            }
+        }
+    }
+};
+
+class leetcode701
+{
+public:
+    TreeNode *insertIntoBST(TreeNode *root, int val)
+    {
+        // 确定递归中止条件
+        // 当遇到null的时候其实就是该插入的节点的地方了
+        if (root == nullptr)
+        {
+            TreeNode *node = new TreeNode(val);
+            return node;
+        }
+
+        // 左
+        if (root->val > val)
+        {
+            root->left = insertIntoBST(root->left, val);
+        }
+
+        // 右
+        if (root->val < val)
+        {
+            root->right = insertIntoBST(root->right, val);
+        }
+
+        return root;
+    }
+
+    TreeNode *insertIntoBST(TreeNode *root, int val)
+    {
+        // 迭代法
+        // 需要有一个pre指针记录因为最后我们也是找到了null才知道
+        // 需要插入但是此时以及丢失父节点信息因此需要一个pre来记录
+        if (root == nullptr)
+        {
+            TreeNode *node = new TreeNode(val);
+            return node;
+        }
+        TreeNode *cur = root;
+        TreeNode *pre = root;
+        while (cur)
+        {
+            pre = cur;
+            if (cur->val > val)
+            {
+                cur = cur->left;
+            }
+            else if (cur->val < val)
+            {
+                cur = cur->right;
+            }
+        }
+        TreeNode *node = new TreeNode(val);
+        if (pre->val > val)
+        {
+            pre->left = node;
+        }
+        else
+        {
+            pre->right = node;
+        }
+        return root;
+    }
+};
