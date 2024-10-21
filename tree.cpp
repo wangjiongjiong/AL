@@ -2195,3 +2195,272 @@ public:
         return root;
     }
 };
+
+class leetcode450
+{
+public:
+    TreeNode *deleteNode(TreeNode *root, int key)
+    {
+        // 删除二叉搜索树的节点
+        // 对于删除节点一共有五种情况
+        // 1.遇到不是删除的节点就返回null即可
+        // 2.删除节点是叶子节点，直接删除
+        // 3.删除节点左不为空右为空，将删除节点的左孩子代替删除节点
+        // 4.删除节点左为空右不为空，将删除节点的右孩子代替删除节点
+        // 5.删除节点左右孩子都不为空，考虑删除节点的右孩子作为新的节点，需要将
+        // 删除节点的左孩子连接到紧挨着删除节点大小节点的左孩子
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        if (root->val == key)
+        {
+            if (!root->left && !root->right)
+            {
+                // 内存释放
+                delete root;
+                return nullptr;
+            }
+            else if (root->left && !root->right)
+            {
+                TreeNode *node = root->left;
+                delete root;
+                return node;
+            }
+            else if (!root->left && root->right)
+            {
+                TreeNode *node = root->right;
+                delete root;
+                return node;
+            }
+            else
+            {
+                TreeNode *cur = root->right;
+                while (cur->left)
+                {
+                    cur = cur->left;
+                }
+                cur->left = root->left;
+                TreeNode *node = root->right;
+                delete root;
+                return node;
+            }
+        }
+
+        // 左
+        if (root->val > key)
+        {
+            root->left = deleteNode(root->left, key);
+        }
+        // 右
+        if (root->val < key)
+        {
+            root->right = deleteNode(root->right, key);
+        }
+
+        return root;
+    }
+
+    TreeNode *deleteNode2(TreeNode *root, int key)
+    {
+        // 对于普通二叉树的删除
+        // 二叉搜索树的其实不需要左右子树全部遍历
+        // 但是普通二叉树就是要全部遍历才能找到删除节点
+        // 1.删除叶子节点就直接null覆盖
+        // 2.如果删除节点右孩子不为空就让左孩子直接替代
+        // 3.如果删除节点右孩子不为空就让删除节点和右孩子中的最左则节点交换数值
+        // 这样当第二次找到的时候就是叶子节点就直接覆盖为null了
+        // 代码更简洁但是不如上面的思路更清晰
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        if (root->val == key)
+        {
+            if (!root->right)
+            {
+                return root->left;
+            }
+            TreeNode *cur = root->right;
+            while (cur->left)
+            {
+                cur = cur->left;
+            }
+            swap(cur->val, root->val);
+        }
+
+        root->left = deleteNode2(root->left, key);
+        root->right = deleteNode2(root->right, key);
+
+        return root;
+    }
+};
+
+class leetcode669
+{
+public:
+    TreeNode *trimBST(TreeNode *root, int low, int high)
+    {
+        // 修剪二叉搜索树
+        // 与删除二叉搜索树节点有延续性
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        if (root->val < low)
+        {
+            TreeNode *node = trimBST(root->right, low, high);
+            return node;
+        }
+        if (root->val > high)
+        {
+            TreeNode *node = trimBST(root->left, low, high);
+            return node;
+        }
+
+        root->left = trimBST(root->left, low, high);
+
+        root->right = trimBST(root->right, low, high);
+
+        return root;
+    }
+
+    TreeNode *trimBST2(TreeNode *root, int low, int high)
+    {
+        // 迭代法感觉更不好理解呢
+        // 由于是一个二叉搜索树因此是不需要栈这个辅助结构的
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        // 找到一个root在[low,high]中这样才符合要求
+        while (root && (root->val < low || root->val > high))
+        {
+            if (root->val < low)
+            {
+                root = root->right;
+            }
+            else
+            {
+                root = root->left;
+            }
+        }
+        TreeNode *cur = root;
+        // 从root的左侧开始找
+        while (cur)
+        {
+            while (cur->left && cur->left->val < low)
+            {
+                cur->left = cur->left->right;
+            }
+            cur = cur->left;
+        }
+
+        cur = root;
+
+        // 从root的右侧开始找
+        while (cur)
+        {
+            while (cur->right && cur->right->val > high)
+            {
+                cur->right = cur->right->left;
+            }
+            cur = cur->right;
+        }
+
+        return root;
+    }
+};
+
+class leetcaode108
+{
+public:
+    TreeNode *sortedArrayToBST(vector<int> &nums)
+    {
+        // 有点类似分治法
+        // 其实就是每次取中间节点构造
+        if (nums.size() == 0)
+        {
+            return 0;
+        }
+        int left = 0;
+        int right = nums.size() - 1;
+        int mid = left + (right - left) / 2;
+        TreeNode *node = new TreeNode(nums[mid]);
+        if (nums.size() == 1)
+        {
+            return node;
+        }
+        // 左子树
+        vector<int> left_array(nums.begin(), nums.begin() + mid);
+        // 右子树
+        vector<int> right_array(nums.begin() + mid + 1, nums.end());
+
+        node->left = sortedArrayToBST(left_array);
+        node->right = sortedArrayToBST(right_array);
+
+        return node;
+    }
+};
+
+class leetcode538
+{
+public:
+    TreeNode *pre = nullptr; // 记录前一个节点
+    TreeNode *convertBST(TreeNode *root)
+    {
+        // 逆向的中序遍历
+        traversal(root);
+        return root;
+    }
+
+    void traversal(TreeNode *node)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+        traversal(node->right);
+        // 中操作
+        if (pre != nullptr)
+        {
+            node->val += pre->val;
+        }
+
+        pre = node;
+
+        traversal(node->left);
+        return;
+    }
+
+    TreeNode *convertBST2(TreeNode *root)
+    {
+        // 直接用迭代法，右中左
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+        stack<TreeNode *> st;
+        TreeNode *cur = root;
+        while (!st.empty() || cur)
+        {
+            if (cur)
+            {
+                st.push(cur);
+                cur = cur->right;
+            }
+            else
+            {
+                cur = st.top();
+                st.pop();
+                if (pre)
+                {
+                    cur->val += pre->val;
+                }
+                pre = cur;
+                cur = cur->left;
+            }
+        }
+        return root;
+    }
+};
