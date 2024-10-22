@@ -94,8 +94,61 @@ public:
     }
 };
 
+class leetcode63
+{
+public:
+    int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid)
+    {
+        int m = obstacleGrid.size();
+        int n = obstacleGrid[0].size();
+        vector<vector<int>> dp(m, vector(n, 0));
+        if (obstacleGrid[m - 1][n - 1] == 1 || obstacleGrid[0][0] == 1) // 如果在起点或终点出现了障碍，直接返回0
+            return 0;
+        for (int i = 0; i < m && obstacleGrid[i][0] == 0; i++)
+            dp[i][0] = 1;
+        for (int j = 0; j < n && obstacleGrid[0][j] == 0; j++)
+            dp[0][j] = 1;
+        for (int i = 0; i < dp.size(); ++i)
+        {
+            for (int j = 0; j < dp[0].size(); ++j)
+            {
+                cout << dp[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        for (int i = 1; i < m; ++i)
+        {
+            for (int j = 1; j < n; ++j)
+            {
+                if (obstacleGrid[i][j] == 0)
+                {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+        for (int i = 0; i < dp.size(); ++i)
+        {
+            for (int j = 0; j < dp[0].size(); ++j)
+            {
+                cout << dp[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        return dp[m - 1][n - 1];
+    }
+};
+
 int main()
 {
-    leetcode509 leet;
-    cout << leet.fib(5) << endl;
+    leetcode63 leet;
+    vector<vector<int>> vec = {{0, 0},
+                               {1, 1},
+                               {0, 0}};
+    cout << leet.uniquePathsWithObstacles(vec) << endl;
 }
