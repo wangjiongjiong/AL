@@ -208,8 +208,78 @@ public:
     }
 };
 
+class leetcode416
+{
+public:
+    bool canPartition(vector<int> &nums)
+    {
+        int sum = 0;
+        for (auto &a : nums)
+        {
+            sum += a;
+        }
+        if (sum % 2 == 1)
+        {
+            return false;
+        }
+        // 这个就相当于01背包中的背包容量
+        sum = sum / 2;
+        // 相当于物品数目
+        int n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(sum + 1, 0));
+
+        for (int i = 0; i <= sum; ++i)
+        {
+            if (i < nums[0])
+            {
+                continue;
+            }
+            else
+            {
+                dp[0][i] = nums[0];
+            }
+        }
+
+        for (int i = 0; i < dp.size(); ++i)
+        {
+            for (int j = 0; j < dp[0].size(); ++j)
+            {
+                cout << dp[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        for (int i = 1; i < n; ++i)
+        {
+            for (int j = 0; j <= sum; ++j)
+            {
+                if (j < nums[i])
+                {
+                    dp[i][j] = dp[i - 1][j];
+                }
+                else
+                {
+                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);
+                }
+            }
+        }
+
+        for (int i = 0; i < dp.size(); ++i)
+        {
+            for (int j = 0; j < dp[0].size(); ++j)
+            {
+                cout << dp[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        return dp[n - 1][sum] == sum ? true : false;
+    }
+};
+
 int main()
 {
-    leetcode96 leet;
-    cout << leet.numTrees(3) << "\n";
+    leetcode416 leet;
+    vector<int> ans = {1, 5, 11, 5};
+    cout << leet.canPartition(ans) << "\n";
 }
