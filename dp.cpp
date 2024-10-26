@@ -277,6 +277,94 @@ public:
     }
 };
 
+class leetcode1049
+{
+public:
+    int lastStoneWeightII(vector<int> &stones)
+    {
+        // 最后一块石头的重量
+        // 类似于整数分割
+        // 数组分割其实是求背包容量已知了看看是否能装满
+        // 但这个题目其实求一个背包的最大容量
+        // 我们的目的是想把石头分成两堆
+        // 然后让他们相减求一个最小值
+        // 那么最优的算法就是让这两堆石头尽可能相等
+        // 那么我们就先求出来sum 显然target = sum/2
+        // 那么我们背包的容量就是target我们要求的就是背包容量target看看能装多少
+        // 1.定义dp数组 ，dp[j] 就是背包容量为j的情况下所装的最大价值也就是最大容量
+        // 这里stone的价值就是他的容量
+        // 2.确定递推公式
+        // 对于背包问题递推公式有点公式
+        // dp[j] = max(dp[j],dp[j-weight[i]] + value[i])]
+        // 3.初始化dp数组
+        // dp = 0即可 因为对于dp[0]始终是没有意义的但是后面也要初始化0不然有可能会覆盖dp数组
+        // 4.遍历顺序，遍历顺序对于一维数组一定是先物品再背包，并且背包一定要倒叙遍历
+
+        // 先求和
+        int sum = 0;
+        for (auto &a : stones)
+        {
+            sum += a;
+        }
+        int target = sum / 2;
+        int *dp = new int[target + 1]{0};
+
+        for (int i = 0; i < stones.size(); ++i)
+        {
+            for (int j = target; j >= stones[i]; --j)
+            {
+                dp[j] = max(dp[j], dp[j - stones[i]] + stones[i]);
+            }
+        }
+
+        int ans = dp[target];
+        return sum - ans - ans;
+    }
+
+    int lastStoneWeightII2(vector<int> &stones)
+    {
+        // 使用二维数组实现一下
+        // 一维数组有时候不好理解
+        // 二维dp数组比较基础，还是要练习一下
+        int sum = 0, target = 0;
+        for (auto &a : stones)
+        {
+            sum += a;
+        }
+        target = sum / 2;
+        vector<vector<int>> dp(stones.size(), vector<int>(target + 1, 0));
+        for (int i = 0; i <= target; ++i)
+        {
+            if (i < stones[0])
+            {
+                continue;
+            }
+            else
+            {
+                dp[0][i] = stones[0];
+            }
+        }
+
+        for (int i = 1; i < stones.size(); ++i)
+        {
+            for (int j = 0; j <= target; ++j)
+            {
+                if (j < stones[i])
+                {
+                    dp[i][j] = dp[i - 1][j];
+                }
+                else
+                {
+                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - stones[i]] + stones[i]);
+                }
+            }
+        }
+
+        int ans = dp[n - 1][target];
+        return sum - ans - ans;
+    }
+};
+
 int main()
 {
     leetcode416 leet;
