@@ -360,7 +360,7 @@ public:
             }
         }
 
-        int ans = dp[n - 1][target];
+        int ans = dp[stones.size() - 1][target];
         return sum - ans - ans;
     }
 };
@@ -463,6 +463,33 @@ public:
         }
 
         return dp[nums.size()][left];
+    }
+};
+
+class leetcode518
+{
+public:
+    int change(int amount, vector<int> &coins)
+    {
+        // 这个题目有点类似于将背包装满一共有多少种方法
+        // 但是这个题目与之前的不同这个题目的要求是
+        // 物品可以重复使用这就是完全背包的概念了
+        // 1.dp数组含义
+        // dp[j]的含义就是当背包容量为j时装满背包的方法就是dp[j]个
+        int n = coins.size();
+        vector<uint64_t> dp(amount + 1, 0);
+        // 初始化dp数组
+        dp[0] = 1;
+
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = coins[i]; j <= amount; ++j)
+            {
+                dp[j] = dp[j] + dp[j - coins[i]];
+            }
+        }
+
+        return dp[amount];
     }
 };
 
