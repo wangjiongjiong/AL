@@ -102,6 +102,32 @@ int backpack01_1()
     return dp[packweight];
 }
 
+int backpackwanquan()
+{
+    int n, packweight;
+    cin >> n >> packweight;
+    vector<int> weight(n, 0);
+    vector<int> value(n, 0);
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> weight[i] >> value[i];
+    }
+
+    // 定义dp数组含义
+    vector<int> dp(packweight + 1, 0);
+
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = weight[i]; j <= packweight; ++j)
+        {
+            dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+        }
+    }
+
+    cout << dp[packweight];
+    return dp[packweight];
+}
+
 int main(int agrc, char *argv[])
 {
 
