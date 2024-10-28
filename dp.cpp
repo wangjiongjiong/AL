@@ -365,6 +365,107 @@ public:
     }
 };
 
+class leetcode494
+{
+public:
+    int findTargetSumWays(vector<int> &nums, int target)
+    {
+        // 这个题目其实也是背包问题的变式
+        // 经过上面三道题目你会发现背包问题类型的
+        // 都是求和找中间数作为背包容量
+        // 其本质就是求一个最大值的问题
+        // 这个题目也是如此
+        // 在每个数前添加+，-其实就是将nums分成两堆
+        // 一堆为+ 一堆为-
+        // 这里用left代替+，用right代替-
+        // 因此left+right = sum（nums）
+        // left - right = target
+        // 这样的话就可以求出来 left = （target + sum）/ 2
+        // 因此直接在 target + sum 进行判断如果%2 ！= 1就可以直接返回0
+        int sum = 0;
+        int left = 0;
+        for (auto &a : nums)
+        {
+            sum += a;
+        }
+        if ((target + sum) % 2 != 0)
+        {
+            return 0;
+        }
+        left = (target + sum) / 2;
+        // 1.dp数组定义 dp[j] 背包容量为j的情况下，一共有dp[j] 种方法
+        int *dp = new int[left + 1]{0};
+        // 2.初始化dp[0] = 1;
+        dp[0] = 1;
+        // 3.递推公式
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            for (int j = left; j >= nums[i]; --j)
+            {
+                dp[j] += dp[j - nums[i]];
+            }
+        }
+
+        return dp[left];
+    }
+
+    int findTargetSumWays2(vector<int> &nums, int target)
+    {
+        // 使用二维数组再做一遍
+        //  感觉二维数组更加好理解
+        int sum = 0;
+        int left = 0;
+        for (auto &a : nums)
+        {
+            sum += a;
+        }
+        if (sum < abs(target))
+        {
+            return 0;
+        }
+        if (((sum + target) / 2) % 2 != 0)
+        {
+            return 0;
+        }
+        int left = (sum + target) / 2;
+        vector<vector<int>> dp(nums.size(), (left + 1, 0));
+        dp[0][0] = 1;
+        if (nums[0] < left)
+        {
+            dp[0][nums[0]] = 1;
+        }
+        int zero = 0;
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            if (nums[i] == 0)
+            {
+                zero++;
+            }
+            else
+            {
+                dp[i][0] = (int)pow(2.0, zero);
+            }
+        }
+
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            for (int j = 0; j <= left; ++j)
+            {
+                if (j < nums[i])
+                {
+                    dp[i][j] = dp[i - 1][j];
+                }
+                else
+                {
+                    dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i]];
+                }
+            }
+        }
+
+        return dp[nums.size()][left];
+    }
+};
+
 int main()
 {
     leetcode416 leet;
