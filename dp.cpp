@@ -493,6 +493,29 @@ public:
     }
 };
 
+class leetcode377
+{
+public:
+    int combinationSum4(vector<int> &nums, int target)
+    {
+        // 其实这个是不是就是将背包装满一共有多少种方法
+        // 并且框架是完全背包
+        vector<int> dp(target + 1, 0);
+
+        dp[0] = 1;
+
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            for (int j = nums[i]; j <= target; ++j)
+            {
+                dp[j] = dp[j] + dp[j - nums[i]];
+            }
+        }
+
+        return dp[target];
+    }
+};
+
 int main()
 {
     leetcode416 leet;
