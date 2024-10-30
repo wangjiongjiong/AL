@@ -516,6 +516,30 @@ public:
     }
 };
 
+class leetcode322
+{
+public:
+    int coinChange(vector<int> &coins, int amount)
+    {
+        // 这个题目就是背包问题的框架题目
+        // 其本质就是求如何将背包装满用最少的物品
+        // 定义dp[j] 含义就是当背包容量为j是dp[j]就是将背包装满的最少物品数目
+        vector<int> dp(amount + 1, 100000);
+
+        dp[0] = 0;
+
+        for (int i = 0; i < coins.size(); ++i)
+        {
+            for (int j = coins[i]; j <= amount; ++j)
+            {
+                dp[j] = min(dp[j - coins[i]] + 1, dp[j]);
+            }
+        }
+
+        return dp[amount] == 100000 ? -1 : dp[amount];
+    }
+};
+
 int main()
 {
     leetcode416 leet;
