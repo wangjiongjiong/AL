@@ -540,6 +540,30 @@ public:
     }
 };
 
+class Solution
+{
+public:
+    int numSquares(int n)
+    {
+        // 有点类似背包问题中背包容量装满的情况下数目最少是多少
+        vector<int> dp(n + 1, 999999);
+
+        dp[0] = 0;
+
+        int count = n / 2;
+
+        for (int i = 1; i <= count; ++i)
+        {
+            for (int j = pow(i, 2); j <= n; ++j)
+            {
+                dp[j] = min(dp[j], dp[j - pow(i, 2)] + 1);
+            }
+        }
+
+        return dp[n];
+    }
+};
+
 int main()
 {
     leetcode416 leet;
