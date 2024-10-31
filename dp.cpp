@@ -598,6 +598,55 @@ public:
     }
 };
 
+class leetcode213
+{
+public:
+    int rob(vector<int> &nums)
+    {
+        // 打家劫舍2
+        // 这个题目限制了第一个房间与最后一个房间是相邻的
+        // 就是将所有房间连成环考虑
+        // 这个题目如果陷入环的思路就会很容易陷进去
+        // 正确的想法是进行拆解
+        // 很显然有三种情况
+        // 1. 不考虑首元素也不考虑尾元素
+        // 2. 只考虑首元素
+        // 3. 只考虑尾元素
+        // 2，3这两种就可以涵盖1
+        // 这样就把环形的房间问题拆分成线性的两组
+        // 这样只需要最后求max两种情况就可以了
+        if (nums.size() == 1)
+        {
+            return nums[0];
+        }
+        if (nums.size() == 2)
+        {
+            return max(nums[0], nums[1]);
+        }
+
+        int ans1 = rob_linear(nums, 0, nums.size() - 2);
+        int ans2 = rob_linear(nums, 1, nums.size() - 1);
+        return max(ans1, ans2);
+    }
+
+    int rob_linear(vector<int> &nums, int start, int end)
+    {
+        if (start == end)
+        {
+            return nums[start];
+        }
+        vector<int> dp(nums.size(), 0);
+        dp[start] = nums[start];
+        dp[start + 1] = max(nums[start], nums[start + 1]);
+        for (int i = start + 2; i <= end; ++i)
+        {
+            dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+
+        return dp[end];
+    }
+};
+
 int main()
 {
 }
