@@ -564,9 +564,40 @@ public:
     }
 };
 
+class leetcode198
+{
+public:
+    int rob(vector<int> &nums)
+    {
+        // 打家劫舍
+        // 有点类似于爬楼梯
+        // 当前房间偷与不偷其实是依赖于前两个房间的状态
+        // 当前房间不偷其实就是回退到前一个房间
+        // 当前房间偷就是回退到前两个房间然后加上当前房间的价值
+        if (nums.size() == 0)
+        {
+            // 只有一个元素就是直接返回
+            return nums[0];
+        }
+        if (nums.size() == 2)
+        {
+            // 有两个元素就直接返回 最大值
+            return max(nums[0], nums[1]);
+        }
+
+        vector<int> dp(nums.size(), 0);
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+
+        for (int i = 2; i < nums.size(); ++i)
+        {
+            dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+
+        return dp[nums.size() - 1];
+    }
+};
+
 int main()
 {
-    leetcode416 leet;
-    vector<int> ans = {1, 5, 11, 5};
-    cout << leet.canPartition(ans) << "\n";
 }
