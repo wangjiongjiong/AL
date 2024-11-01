@@ -647,6 +647,55 @@ public:
     }
 };
 
+/**
+  Definition for a binary tree node.
+  **/
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class leetcode337
+{
+public:
+    int rob(TreeNode *root)
+    {
+        // 树形dp的题目
+        // 这个题目的思路是在遍历树的过程中
+        // 加入dp的思想
+        // 这里的dp含义与之前的题目都有所不同
+        // 你可以这样想，现在我们的结构是一个树
+        // 那么对于一个树的节点是不是只有偷与不偷两种状态
+        // 因此我们的dp数组也就是一个只含有两个元素的数组就可以
+
+        vector<int> ans = robtree(root);
+        return max(ans[0], ans[1]);
+    }
+
+    vector<int> robtree(TreeNode *node)
+    {
+        if (node == nullptr)
+        {
+            return {0, 0};
+        }
+
+        vector<int> leftdp = robtree(node->left);
+        vector<int> rightdp = robtree(node->right);
+        // 对于每一个节点都有偷与不偷两种情况
+        // 1.偷
+        int result1 = node->val + leftdp[0] + rightdp[0];
+        // 2.不偷
+        int result2 = max(leftdp[1], leftdp[0]) + max(rightdp[1], rightdp[0]);
+
+        return {result2, result1};
+    }
+};
+
 int main()
 {
 }
