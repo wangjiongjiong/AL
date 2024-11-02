@@ -696,6 +696,45 @@ public:
     }
 };
 
+class leetcode121
+{
+public:
+    int maxProfit(vector<int> &prices)
+    {
+        // 买卖股票最佳时机
+        // 买卖股票其实是有两个状态
+        // 1第i天持有股票所获取的最大利润
+        // 2第i天不持有股票所获取的最大利润
+
+        if (prices.size() == 1)
+        {
+            return 0;
+        }
+
+        // 定义dp数组含义
+        // dp[i][0] 第i天持有股票的最大利润
+        // dp[i][1] 第i天不持有股票的最大利润
+        vector<vector<int>> dp(prices.size(), vector<int>(2, 0));
+
+        // 初始化
+        // 第0天dp[0][0] 就是买入当天的股票
+        // 第0天dp[0][1] 就是0
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+
+        // 递推公式
+        // dp[i][0] = max(dp[i-1][0],-prices[i])
+        // dp[i][1] = max(dp[i-1][1],dp[i-1][0] + prices[i])
+        for (int i = 1; i < prices.size(); ++i)
+        {
+            dp[i][0] = max(dp[i - 1][0], -prices[i]);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+        }
+
+        return max(dp[prices.size() - 1][0], dp[prices.size() - 1][1]);
+    }
+};
+
 int main()
 {
 }
