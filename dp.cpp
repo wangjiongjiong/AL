@@ -735,6 +735,31 @@ public:
     }
 };
 
+class leetcode122
+{
+public:
+    int maxProfit(vector<int> &prices)
+    {
+        // 买卖股票2
+        // 与买卖股票1，不同之处在于
+        // 这次可以多次买入卖出
+        // 但是dp数组的定义与含义是不变的
+        int size = prices.size();
+        vector<vector<int>> dp(size, vector(2, 0));
+
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+
+        for (int i = 1; i < size; ++i)
+        {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+        }
+
+        return max(dp[size - 1][0], dp[size - 1][1]);
+    }
+};
+
 int main()
 {
 }
