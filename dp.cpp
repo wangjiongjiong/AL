@@ -760,6 +760,81 @@ public:
     }
 };
 
+class leetcode123
+{
+public:
+    int maxProfit(vector<int> &prices)
+    {
+        // 买卖股票3
+        // 在买卖股票2的基础上增加至多买卖两次
+        // 这就要求我们的状态要增多不能只有两个状态了
+        // dp[i][0]  第i天第一次持有股票
+        // dp[i][1]  第i天第一次不持有股票
+        // dp[i][2]  第i天第二次持有股票
+        // dp[i][3]  第i天第二次不持有股票
+        int size = prices.size();
+        if (size == 1)
+        {
+            return 0;
+        }
+        vector<vector<int>> dp(size, vector<int>(4, 0));
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+        dp[0][2] = -prices[0];
+        dp[0][3] = 0;
+
+        for (int i = 1; i < size; ++i)
+        {
+            dp[i][0] = max(dp[i - 1][0], -prices[i]);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+            dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] - prices[i]);
+            dp[i][3] = max(dp[i - 1][3], dp[i - 1][2] + prices[i]);
+        }
+
+        return max(dp[size - 1][2], dp[size - 1][3]);
+    }
+};
+
+class leetcode188
+{
+public:
+    int maxProfit(int k, vector<int> &prices)
+    {
+        // 至多买卖k次
+        // dp[i][0]  不操作
+        // dp[i][2m-1]  第i天第m次持有股票
+        // dp[i][2m] 第i天第m次不持有股票
+        int size = prices.size();
+        vector<vector<int>> dp(size, vector<int>(2 * k + 1, 0));
+
+        for (int i = 1; i < 2 * k; i += 2)
+        {
+            dp[0][i] = -prices[0];
+        }
+
+        for (int i = 1; i < size; ++i)
+        {
+            for (int j = 1; j <= (2 * k) - 1; j += 2)
+            {
+                // 先是持有股票的情况 j
+                // 再是不持有股票的情况 j+1
+                if (j == 0)
+                {
+                    dp[i][0] = max(dp[i - 1][0], -prices[i]);
+                    dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+                }
+                else
+                {
+                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - 1] - prices[i]);
+                    dp[i][j + 1] = max(dp[i - 1][j + 1], dp[i - 1][j] + prices[i]);
+                }
+            }
+        }
+
+        return dp[size - 1][2 * k];
+    }
+};
+
 int main()
 {
 }
