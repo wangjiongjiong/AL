@@ -899,6 +899,77 @@ public:
     }
 };
 
+class leetcode300
+{
+public:
+    int lengthOfLIS(vector<int> &nums)
+    {
+        // 最长递增子序列
+        // 主要是递推公式
+        // dp数组定义含义
+        // dp[i] nums[i]的最长递增子序列长度为dp[i]
+        // 遍历顺序用i一定要从大到小
+        // 内部顺序遍历采用从小到大和从大到小两种都可以
+        // 初始化都是1因为最少你也有一个数作为子序列
+        int size = nums.size();
+        if (size == 1)
+        {
+            return 1;
+        }
+        vector<int> dp(size, 1);
+        int ans = 0;
+        for (int i = 1; i < size; ++i)
+        {
+            for (int j = 0; j < i; ++j)
+            {
+                if (nums[j] < nums[i])
+                {
+                    dp[i] = max(dp[j] + 1, dp[i]);
+                }
+
+                if (ans < dp[i])
+                {
+                    ans = dp[i];
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+class leetcode674
+{
+public:
+    int findLengthOfLCIS(vector<int> &nums)
+    {
+        // 最长递增连续子序列的长度
+        // 这个题目感觉已经没有dp的含义了
+        // 其实就是从小到大遍历
+        // 然后在自增的序列中求即可
+        // 最后只要求dp数组里面的最大值即可
+        int size = nums.size();
+        if (size == 1)
+        {
+            return 1;
+        }
+        vector<int> dp(size, 1);
+        int ans = 0;
+        for (int i = 1; i < size; ++i)
+        {
+            if (nums[i] > nums[i - 1])
+            {
+                dp[i] = dp[i - 1] + 1;
+            }
+            if (dp[i] > ans)
+            {
+                ans = dp[i];
+            }
+        }
+
+        return ans;
+    }
+};
+
 int main()
 {
 }
