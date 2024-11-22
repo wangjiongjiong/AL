@@ -1082,6 +1082,59 @@ public:
     }
 };
 
+class leetcode392
+{
+public:
+    bool isSubsequence(string s, string t)
+    {
+        // 可以考虑使用双指针来解题
+        int s_point = 0;
+        int t_point = 0;
+        while (s_point < s.size())
+        {
+            if (s[s_point] == t[t_point])
+            {
+                s_point++;
+                t_point++;
+            }
+            else
+            {
+                t_point++;
+            }
+            if (t_point == t.size())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isSubsequence2(string s, string t)
+    {
+        // 动态规划解决问题
+        int s_size = s.size();
+        int t_size = t.size();
+        vector<vector<int>> dp(s_size + 1, vector<int>(t_size + 1, 0));
+
+        for (int i = 1; i <= s_size; ++i)
+        {
+            for (int j = 1; j <= t_size; ++j)
+            {
+                if (s[i - 1] == t[j - 1])
+                {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                }
+                else
+                {
+                    dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+
+        return dp[s_size][t_size] == s.size() ? true : false;
+    }
+};
+
 int main()
 {
 }
