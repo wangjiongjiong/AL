@@ -1135,6 +1135,74 @@ public:
     }
 };
 
+class leetcode115
+{
+public:
+    int numDistinct(string s, string t)
+    {
+        int s_size = s.size();
+        int t_size = t.size();
+        vector<vector<int>> dp(s_size + 1, vector<int>(t_size + 1, 0));
+        for (int i = 0; i < s_size + 1; ++i)
+        {
+            dp[i][0] = 1;
+        }
+
+        for (int i = 1; i <= s_size; ++i)
+        {
+            for (int j = 1; j <= t_size; ++j)
+            {
+                if (s[i - 1] == t[j - 1])
+                {
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                }
+                else
+                {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+        return dp[s_size][t_size];
+    }
+};
+
+class letcode583
+{
+public:
+    int minDistance(string word1, string word2)
+    {
+        int s_size = word1.size();
+        int t_size = word2.size();
+
+        vector<vector<int>> dp(s_size + 1, vector<int>(t_size + 1, 0));
+
+        for (int i = 0; i < s_size + 1; ++i)
+        {
+            dp[i][0] = i;
+        }
+        for (int i = 0; i < t_size + 1; ++i)
+        {
+            dp[0][i] = i;
+        }
+
+        for (int i = 1; i <= s_size; ++i)
+        {
+            for (int j = 1; j <= t_size; ++j)
+            {
+                if (word1[i - 1] == word2[j - 1])
+                {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+                else
+                {
+                    dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+                }
+            }
+        }
+        return dp[s_size][t_size];
+    }
+};
+
 int main()
 {
 }
