@@ -1243,6 +1243,70 @@ public:
     }
 };
 
+class leetcode674
+{
+public:
+    int countSubstrings(string s)
+    {
+        // 判断回文子串
+        // [i，j]这个字串从i到j他是否是回文串其实可以依赖于[i+1，j-1]
+        int size = s.size();
+        vector<vector<bool>> dp(s, vector<bool>(s, false));
+        int ans = 0;
+        for (int i = size - 1; i >= 0; --i)
+        {
+            for (int j = i; j < size; ++j)
+            {
+                if (s[i] == s[j])
+                {
+                    if (j - i <= 1)
+                    {
+                        dp[i][j] = true;
+                        ans++;
+                    }
+                    else if (dp[i + 1][j - 1])
+                    {
+                        dp[i][j] = true;
+                        ans++;
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+class leetcode516
+{
+public:
+    int longestPalindromeSubseq(string s)
+    {
+        // 找出最长回文子串并返回长度
+        int size = s.size();
+        vector<vector<int>> dp(size, vector<int>(size, 0));
+        for (int i = 0; i < size; ++i)
+        {
+            dp[i][i] = 1;
+        }
+        for (int i = size - 1; i >= 0; --i)
+        {
+            for (int j = i; j < size; ++j)
+            {
+                if (s[i] == s[j])
+                {
+
+                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                }
+                else
+                {
+                    dp[i][j] = max(dp[i][j - 1], dp[i + 1][j]);
+                }
+            }
+        }
+        return dp[0][size - 1];
+    }
+};
+
 int main()
 {
 }
