@@ -380,6 +380,48 @@ public:
     }
 };
 
+class leetcode491
+{
+
+private:
+    vector<int> path;
+    vector<vector<int>> ans;
+    void backtracking(vector<int> &nums, int startindex)
+    {
+        if (path.size() >= 2)
+        {
+            ans.push_back(path);
+        }
+        if (startindex > nums.size())
+        {
+            return;
+        }
+        bool map[200] = {0};
+
+        for (int i = startindex; i < nums.size(); ++i)
+        {
+            if (!path.empty() && path.back() > nums[i] && map[nums[i] + 100] == 1)
+            {
+                continue;
+            }
+            else
+            {
+                map[nums[i] + 100] = true;
+                path.push_back(nums[i]);
+                backtracking(nums, i + 1);
+                path.pop_back();
+            }
+        }
+    }
+
+public:
+    vector<vector<int>> findSubsequences(vector<int> &nums)
+    {
+        backtracking(nums, 0);
+        return ans;
+    }
+};
+
 int main()
 {
 
