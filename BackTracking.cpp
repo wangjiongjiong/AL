@@ -241,6 +241,145 @@ public:
     }
 };
 
+class leetcode93
+{
+
+private:
+    vector<string> ans;
+    bool isValid(string &s, int start, int end)
+    {
+        if (start > end)
+        {
+            return false;
+        }
+        if (s[start] != '0' && start != end)
+        {
+            return false;
+        }
+        int num = 0;
+        for (int i = start; i <= end; ++i)
+        {
+            if (s[i] > '9' || s[i] < '0')
+            {
+                return false;
+            }
+            num = num * 10 + (s[i] - '0');
+            if (num > 255)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    void backtracking(string &s, int startindex, int point_sum)
+    {
+        if (point_sum == 3)
+        {
+            if (isValid(s, startindex, s.size() - 1))
+            {
+                ans.push_back(s);
+            }
+            return;
+        }
+
+        for (int i = startindex; i < s.size(); ++i)
+        {
+            if (isValid(s, startindex, i))
+            {
+                s.insert(s.begin() + i + 1, '.');
+                point_sum++;
+                backtracking(s, i + 2, point_sum);
+                point_sum--;
+                s.erase(s.begin() + i + 1);
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
+public:
+    vector<string> restoreIpAddresses(string s)
+    {
+        if (s.size() < 4 || s.size() > 12)
+        {
+            return {};
+        }
+        backtracking(s, 0, 0);
+        return ans;
+    }
+};
+
+class leetcode78
+{
+
+private:
+    vector<vector<int>> ans;
+    vector<int> path;
+    void backtracking(vector<int> &nums, int startindex)
+    {
+        ans.push_back(path);
+
+        if (startindex > nums.size())
+        {
+            return;
+        }
+
+        for (int i = startindex; i < nums.size(); ++i)
+        {
+            path.push_back(nums[i]);
+            backtracking(nums, i + 1);
+            path.pop_back();
+        }
+    }
+
+public:
+    vector<vector<int>> subsets(vector<int> &nums)
+    {
+        backtracking(nums, 0);
+        return ans;
+    }
+};
+
+class leetcode90
+{
+
+private:
+    vector<int> path;
+    vector<vector<int>> ans;
+    void backtracking(vector<int> &nums, int startindex)
+    {
+        ans.push_back(path);
+        if (startindex > nums.size())
+        {
+            return;
+        }
+
+        for (int i = startindex; i < nums.size(); ++i)
+        {
+            if (i > startindex && nums[i] == nums[i - 1])
+            {
+                continue;
+            }
+            else
+            {
+                path.push_back(nums[i]);
+                backtracking(nums, i + 1);
+                path.pop_back();
+            }
+        }
+    }
+
+public:
+    vector<vector<int>> subsetsWithDup(vector<int> &nums)
+    {
+        sort(nums.begin(), nums.end());
+        backtracking(nums, 0);
+        return ans;
+    }
+};
+
 int main()
 {
 
